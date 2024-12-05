@@ -1,0 +1,13 @@
+.board-row:nth-child(odd) > :nth-child(odd) {
+    background-color: black;
+    color: white;
+}
+
+.board-row:nth-child(even) > :nth-child(even) {
+    background-color: black;
+    color: white;
+}
+
+.selected {
+    border: yellow 2px solid;
+}
