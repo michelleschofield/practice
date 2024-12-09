@@ -130,20 +130,33 @@ export function Chess(): JSX.Element {
     }
 
     function pawnMove(selected: Selected, x: number, y: number): void {
-        const newBoard = [...board];
-        const square = board[x][y];
-        if (square.piece && y === selected.y) return;
-        if (!square.piece && y !== selected.y) return;
-        if (square.piece?.color === selected.color) return;
+        const piece = board[x][y].piece;
+        if (piece && y === selected.y) return;
+        if (!piece && y !== selected.y) return;
+        if (piece?.color === selected.color) return;
 
-        const dir = selected.color === 'white' ? -1 : 1;
-        if (x !== selected.x + dir) return;
-
-        if (selected.y === y || (Math.abs(selected.y - 1)) === y) {
-            newBoard[x][y] = {piece: {color: selected.color, type: selected.type}}
-            newBoard[selected.x][selected.y] = {};
+        if (selected.x === 6 && x === 4 && selected.color === 'white') {
+            movePiece(selected, x, y);
+            return;
         }
 
+        if (selected.x === 1 && x === 3 && selected.color === 'black') {
+            movePiece(selected, x, y);
+            return;
+        }
+
+        const dir = selected.color === 'white' ? - 1 : 1;
+        if (x !== selected.x + dir) return;
+
+        if (Math.abs(selected.y - y) <= 1) {
+            movePiece(selected, x, y);
+        }
+    }
+
+    function movePiece(selected: Selected, x: number, y: number): void {
+        const newBoard = [...board];
+        newBoard[x][y] = {piece: {color: selected.color, type: selected.type}}
+        newBoard[selected.x][selected.y] = {};
         setBoard(newBoard);
     }
 
