@@ -16,6 +16,13 @@ type Selected = Piece & {
 
 type Color = 'black' | 'white';
 
+type MoveInfo = {
+    selected: Selected;
+    x: number,
+    y: number,
+    attacked?: Piece;
+}
+
 function buildBoard(): Square[][] {
     const board = []
     for (let i = 0; i < 8; i++) {
@@ -121,19 +128,44 @@ export function Chess(): JSX.Element {
 
     function makeMove(selected: Selected | undefined, x: number, y: number) {
         if (!selected) return;
+        const attacked = board[x][y].piece;
+        if (attacked?.color === selected.color) {
+            setSelected(undefined);
+            return;
+        }
+        const moveInfo: MoveInfo = {
+            selected,
+            x,
+            y,
+            attacked,
+        }
         switch (selected.type) {
             case 'pawn': {
-                pawnMove(selected, x, y);
+                pawnMove(moveInfo);
+                break;
             }
+            case 'knight': {
+                knightMove(moveInfo);
+                break;
+            }
+
         }
         setSelected(undefined);
     }
 
-    function pawnMove(selected: Selected, x: number, y: number): void {
-        const piece = board[x][y].piece;
-        if (piece && y === selected.y) return;
-        if (!piece && y !== selected.y) return;
-        if (piece?.color === selected.color) return;
+    function knightMove({selected, x, y}: MoveInfo): void {
+        const xDiff = Math.abs(selected.x - x);
+        const yDiff = Math.abs(selected.y - y);
+        if (xDiff === 2 && yDiff === 1) {
+            movePiece(selected, x, y);
+        } else if (xDiff === 1 && yDiff === 2) {
+            movePiece(selected, x, y);
+        }
+    }
+
+    function pawnMove({selected, x, y, attacked}: MoveInfo): void {
+        if (attacked && y === selected.y) return;
+        if (!attacked && y !== selected.y) return;
 
         if (selected.x === 6 && x === 4 && selected.color === 'white') {
             movePiece(selected, x, y);
