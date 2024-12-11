@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+type Coords = [number, number];
+
 type Piece = {
     type: string;
     color: Color;
@@ -148,9 +150,43 @@ export function Chess(): JSX.Element {
                 knightMove(moveInfo);
                 break;
             }
+            case 'rook': {
+                rookMove(moveInfo);
+                break;
+            }
 
         }
         setSelected(undefined);
+    }
+
+    function rookMove({selected, x, y}: MoveInfo): void {
+        console.log('rook move');
+        const xDiff = selected.x - x;
+        const yDiff = selected.y - y;
+        if (xDiff && yDiff) return;
+        
+        const line = getLine([selected.x, selected.y], [1, 0]);
+        console.log(line);
+        
+    }
+
+    function getLine(start: Coords, dir: [number, number]): Coords[] {
+        let [x, y] = start;
+        x += dir[0];
+        y += dir[1];
+        const coords: Coords[] = [];
+        while (insideBoard(x, y)) {
+            coords.push([x, y]);
+            x += dir[0];
+            y += dir[1];
+        }
+        return coords;
+    }
+
+    function insideBoard(x: number, y: number): boolean {
+        if (x > 7 || x < 0) return false;
+        if (y > 7 || y < 0) return false;
+        return true;
     }
 
     function knightMove({selected, x, y}: MoveInfo): void {
