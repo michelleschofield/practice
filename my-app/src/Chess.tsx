@@ -154,6 +154,10 @@ export function Chess(): JSX.Element {
                 rookMove(moveInfo);
                 break;
             }
+            case 'bishop': {
+                bishopMove(moveInfo);
+                break;
+            }
 
         }
         setSelected(undefined);
@@ -173,6 +177,21 @@ export function Chess(): JSX.Element {
         if (yDiff) {
             yDir = yDiff < 0 ? -1 : 1;
         }
+
+        const line = getLine([selected.x, selected.y], [xDir, yDir]);
+        if (lineClear(line, [x, y])) {
+            movePiece(selected, x, y);
+        }
+    }
+
+    function bishopMove({selected, x, y}: MoveInfo): void {
+        const xDiff = x -  selected.x;
+        const yDiff = y - selected.y;
+        if (!xDiff || !yDiff) return;
+        if (Math.abs(xDiff) !== Math.abs(yDiff)) return;
+
+        const xDir = xDiff < 0 ? -1 : 1;
+        const yDir = yDiff < 0 ? -1 : 1;
 
         const line = getLine([selected.x, selected.y], [xDir, yDir]);
         if (lineClear(line, [x, y])) {
