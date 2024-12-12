@@ -160,14 +160,33 @@ export function Chess(): JSX.Element {
     }
 
     function rookMove({selected, x, y}: MoveInfo): void {
-        console.log('rook move');
-        const xDiff = selected.x - x;
-        const yDiff = selected.y - y;
+        const xDiff = x -  selected.x;
+        const yDiff = y - selected.y;
         if (xDiff && yDiff) return;
+
+        let xDir = 0;
+        if (xDiff) {
+            xDir = xDiff < 0 ? -1 : 1;
+        }
+
+        let yDir = 0;
+        if (yDiff) {
+            yDir = yDiff < 0 ? -1 : 1;
+        }
         
-        const line = getLine([selected.x, selected.y], [1, 0]);
-        console.log(line);
-        
+        const line = getLine([selected.x, selected.y], [xDir, yDir]);
+        if (lineClear(line, [x, y])) {
+            movePiece(selected, x, y);
+        }
+    }
+
+    function lineClear(line: Coords[], end: Coords): boolean {
+        for (let i = 0; i < line.length; i++) {
+            const [x, y] = line[i];
+            if (x === end[0] && y === end[1]) break;
+            if (board[x][y].piece) return false;
+        }
+        return true;
     }
 
     function getLine(start: Coords, dir: [number, number]): Coords[] {
