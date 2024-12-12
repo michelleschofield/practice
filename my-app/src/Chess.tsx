@@ -158,9 +158,23 @@ export function Chess(): JSX.Element {
                 bishopMove(moveInfo);
                 break;
             }
+            case 'queen': {
+                queenMove(moveInfo);
+                break;
+            }
 
         }
         setSelected(undefined);
+    }
+
+    function queenMove({selected, x, y}: MoveInfo): void {
+        const xDiff = x -  selected.x;
+        const yDiff = y - selected.y;
+        if (xDiff && yDiff) {
+            bishopMove({selected, x, y});
+        } else {
+            rookMove({selected, x, y});
+        }
     }
 
     function rookMove({selected, x, y}: MoveInfo): void {
