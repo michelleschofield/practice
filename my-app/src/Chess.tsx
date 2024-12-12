@@ -173,13 +173,19 @@ export function Chess(): JSX.Element {
         if (yDiff) {
             yDir = yDiff < 0 ? -1 : 1;
         }
-        
+
         const line = getLine([selected.x, selected.y], [xDir, yDir]);
         if (lineClear(line, [x, y])) {
             movePiece(selected, x, y);
         }
     }
 
+    /**
+     * check if a line on the board is clear
+     * @param line set of coords in line
+     * @param end will stop checking at these coords, will not check the board at these coords
+     * @returns whether or not the line is clear
+     */
     function lineClear(line: Coords[], end: Coords): boolean {
         for (let i = 0; i < line.length; i++) {
             const [x, y] = line[i];
