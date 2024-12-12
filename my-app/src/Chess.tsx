@@ -1,5 +1,7 @@
 import { useState } from "react";
 
+type Coords = [number, number];
+
 type Piece = {
     type: string;
     color: Color;
@@ -148,9 +150,62 @@ export function Chess(): JSX.Element {
                 knightMove(moveInfo);
                 break;
             }
+            case 'rook': {
+                rookMove(moveInfo);
+                break;
+            }
 
         }
         setSelected(undefined);
+    }
+
+    function rookMove({selected, x, y}: MoveInfo): void {
+        const xDiff = x -  selected.x;
+        const yDiff = y - selected.y;
+        if (xDiff && yDiff) return;
+
+        let xDir = 0;
+        if (xDiff) {
+            xDir = xDiff < 0 ? -1 : 1;
+        }
+
+        let yDir = 0;
+        if (yDiff) {
+            yDir = yDiff < 0 ? -1 : 1;
+        }
+        
+        const line = getLine([selected.x, selected.y], [xDir, yDir]);
+        if (lineClear(line, [x, y])) {
+            movePiece(selected, x, y);
+        }
+    }
+
+    function lineClear(line: Coords[], end: Coords): boolean {
+        for (let i = 0; i < line.length; i++) {
+            const [x, y] = line[i];
+            if (x === end[0] && y === end[1]) break;
+            if (board[x][y].piece) return false;
+        }
+        return true;
+    }
+
+    function getLine(start: Coords, dir: [number, number]): Coords[] {
+        let [x, y] = start;
+        x += dir[0];
+        y += dir[1];
+        const coords: Coords[] = [];
+        while (insideBoard(x, y)) {
+            coords.push([x, y]);
+            x += dir[0];
+            y += dir[1];
+        }
+        return coords;
+    }
+
+    function insideBoard(x: number, y: number): boolean {
+        if (x > 7 || x < 0) return false;
+        if (y > 7 || y < 0) return false;
+        return true;
     }
 
     function knightMove({selected, x, y}: MoveInfo): void {
