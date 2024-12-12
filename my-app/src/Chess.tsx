@@ -162,9 +162,20 @@ export function Chess(): JSX.Element {
                 queenMove(moveInfo);
                 break;
             }
+            case 'king': {
+                kingMove(moveInfo);
+            }
 
         }
         setSelected(undefined);
+    }
+
+    function kingMove({selected, x, y}: MoveInfo): void {
+        const xDiff = x -  selected.x;
+        const yDiff = y - selected.y;
+        if (Math.abs(xDiff) <= 1 && Math.abs(yDiff) <= 1) {
+            movePiece(selected, x, y);
+        }
     }
 
     function queenMove({selected, x, y}: MoveInfo): void {
