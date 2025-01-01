@@ -116,16 +116,22 @@ function pieceRow(color: Color): Square[] {
 
 export function Chess(): JSX.Element {
     const [board, setBoard] = useState<Square[][]>(buildBoard());
+    const [turn, setTurn] = useState<Color>('white');
     const [selected, setSelected] = useState<Selected>();
 
     function handleSelect(x: number, y: number, piece?: Piece): void {
-        if (!selected && piece) {
+        if (!selected && piece?.color === turn) {
             setSelected({...piece, x, y});
         }
 
         if (selected) {
             makeMove(selected, x, y);
         }
+    }
+
+    function toggleTurn(): void {
+        const color = turn === 'white' ? 'black' : 'white';
+        setTurn(color);
     }
 
     function makeMove(selected: Selected | undefined, x: number, y: number) {
@@ -295,17 +301,21 @@ export function Chess(): JSX.Element {
         newBoard[x][y] = {piece: {color: selected.color, type: selected.type}}
         newBoard[selected.x][selected.y] = {};
         setBoard(newBoard);
+        toggleTurn();
     }
 
     return ( 
-        <div className="flex flex-col">
-            {board.map((row, x) => {
-                return (<div className="flex board-row" key={x}>{row.map((square, y) => {
+        <>
+            <p>{turn}</p>
+            <div className="flex flex-col">
+              {board.map((row, x) => {
+                   return (<div className="flex board-row" key={x}>{row.map((square, y) => {
                     return <div className={`w-20 h-20 board-square ${x === selected?.x && y === selected?.y ? 'selected' : ''}`}  onClick={() => handleSelect(x, y, square.piece)} key={y}>{square.piece?.type}</div>
                 }
             )}</div>)
             })}
         </div>
+        </>
     )
 }
 
